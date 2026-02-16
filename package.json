@@ -2,6 +2,7 @@
   "name": "afghanistan-github-leaderboard",
   "version": "1.0.0",
   "description": "A GitHub-only leaderboard for Afghan developers using GraphQL API",
+  "repository": "github:haroonrashidzadran/afghanistan-github-leaderboard",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
