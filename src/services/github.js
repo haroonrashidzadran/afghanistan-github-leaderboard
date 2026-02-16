@@ -1,53 +1,25 @@
-const { ApolloClient, InMemoryCache, createHttpLink, gql } = require('@apollo/client');
-const { setContext } = require('@apollo/client/link/context');
+const { GraphQLClient, gql } = require('graphql-request');
 const config = require('../config');
-const { SEARCH_USERS, RATE_LIMIT } = require('./queries');
+const { SEARCH_USERS, RATE_LIMIT } = require('../graphql/queries');
 
 /**
- * GitHub API Client
- * Handles all GraphQL interactions with GitHub
+ * GitHub API Client using graphql-request
+ * Lightweight GraphQL client without React dependencies
  */
 class GitHubClient {
   constructor(token) {
     if (!token) {
-      throw new Error('GitHub token is required. Set GITHUB_TOKEN or GH_TOKEN environment variable.');
+      throw new Error('GitHub token is required. Set GITHUB_TOKEN or HRZ_Token environment variable.');
     }
 
     this.token = token;
-    this.client = this.createClient();
-    this.rateLimitRemaining = null;
-  }
-
-  /**
-   * Create Apollo Client with authentication
-   */
-  createClient() {
-    const httpLink = createHttpLink({
-      uri: config.github.apiUrl,
-      fetchOptions: {
-        timeout: config.api.timeout
-      }
-    });
-
-    const authLink = setContext((_, { headers }) => ({
+    this.client = new GraphQLClient(config.github.apiUrl, {
       headers: {
-        ...headers,
-        authorization: `Bearer ${this.token}`
-      }
-    }));
-
-    return new ApolloClient({
-      link: authLink.concat(httpLink),
-      cache: new InMemoryCache(),
-      defaultOptions: {
-        watchQuery: {
-          fetchPolicy: 'no-cache'
-        },
-        query: {
-          fetchPolicy: 'no-cache'
-        }
-      }
+        authorization: `Bearer ${token}`,
+      },
+      timeout: config.api.timeout,
     });
+    this.rateLimitRemaining = null;
   }
 
   /**
@@ -55,19 +27,13 @@ class GitHubClient {
    */
   async checkRateLimit() {
     try {
-      const result = await this.client.query({
-        query: RATE_LIMIT,
-        fetchPolicy: 'no-cache'
-      });
-
-      this.rateLimitRemaining = result.data.rateLimit.remaining;
-      
-      console.log(`Rate Limit: ${result.data.rateLimit.remaining}/${result.data.rateLimit.limit}`);
-      
+      const data = await this.client.request(RATE_LIMIT);
+      this.rateLimitRemaining = data.rateLimit.remaining;
+      console.log(`Rate Limit: ${data.rateLimit.remaining}/${data.rateLimit.limit}`);
       return {
-        remaining: result.data.rateLimit.remaining,
-        limit: result.data.rateLimit.limit,
-        resetAt: result.data.rateLimit.resetAt
+        remaining: data.rateLimit.remaining,
+        limit: data.rateLimit.limit,
+        resetAt: data.rateLimit.resetAt
       };
     } catch (error) {
       console.warn('Could not fetch rate limit:', error.message);
@@ -82,22 +48,18 @@ class GitHubClient {
     const query = `location:${location} sort:followers`;
     
     try {
-      const result = await this.client.query({
-        query: SEARCH_USERS,
-        variables: {
-          query,
-          first: Math.min(limit, config.github.perPage),
-          after: null
-        },
-        fetchPolicy: 'no-cache'
+      const data = await this.client.request(SEARCH_USERS, {
+        query,
+        first: Math.min(limit, config.github.perPage),
+        after: null
       });
 
-      this.updateRateLimit(result);
+      this.updateRateLimit(data);
 
       return {
-        users: result.data.search.nodes,
-        pageInfo: result.data.search.pageInfo,
-        totalCount: result.data.search.userCount
+        users: data.search.nodes,
+        pageInfo: data.search.pageInfo,
+        totalCount: data.search.userCount
       };
     } catch (error) {
       console.error(`Error searching users in ${location}:`, error.message);
@@ -129,25 +91,15 @@ class GitHubClient {
         }
 
         try {
-          const result = await this.client.query({
-            query: SEARCH_USERS,
-            variables: {
-              query: `location:${location} sort:followers`,
-              first: config.github.perPage,
-              after: cursor
-            },
-            fetchPolicy: 'no-cache',
-            errorPolicy: 'all'
+          const data = await this.client.request(SEARCH_USERS, {
+            query: `location:${location} sort:followers`,
+            first: config.github.perPage,
+            after: cursor
           });
 
-          this.updateRateLimit(result);
+          this.updateRateLimit(data);
           
-          if (result.errors) {
-            console.error(`GraphQL errors:`, result.errors);
-            break;
-          }
-
-          const users = result.data.search.nodes;
+          const users = data.search.nodes;
           
           for (const user of users) {
             if (!allUsers.has(user.login)) {
@@ -156,8 +108,8 @@ class GitHubClient {
           }
 
           fetchedCount += users.length;
-          hasNextPage = result.data.search.pageInfo.hasNextPage;
-          cursor = result.data.search.pageInfo.endCursor;
+          hasNextPage = data.search.pageInfo.hasNextPage;
+          cursor = data.search.pageInfo.endCursor;
 
           console.log(`  ✓ Fetched ${users.length} users (Total: ${allUsers.size})`);
 
@@ -178,9 +130,9 @@ class GitHubClient {
   /**
    * Update rate limit from response
    */
-  updateRateLimit(result) {
-    if (result.data?.rateLimit) {
-      this.rateLimitRemaining = result.data.rateLimit.remaining;
+  updateRateLimit(data) {
+    if (data?.rateLimit) {
+      this.rateLimitRemaining = data.rateLimit.remaining;
     }
   }
 

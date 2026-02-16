@@ -1,12 +1,10 @@
-const { gql } = require('@apollo/client');
-
 /**
  * GraphQL Queries for GitHub API
- * Optimized for gayanvoice/top-github-users format
+ * Using raw query strings for graphql-request
  */
 
 // Search for users in Afghanistan
-const SEARCH_USERS = gql`
+const SEARCH_USERS = `
   query SearchUsers($query: String!, $after: String, $first: Int!) {
     search(query: $query, type: USER, first: $first, after: $after) {
       pageInfo {
@@ -48,7 +46,7 @@ const SEARCH_USERS = gql`
 `;
 
 // Get rate limit status
-const RATE_LIMIT = gql`
+const RATE_LIMIT = `
   query RateLimit {
     rateLimit {
       limit
