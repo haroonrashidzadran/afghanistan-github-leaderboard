@@ -37,7 +37,7 @@ jobs:
       
       - name: Run leaderboard update
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.HRZ_Token }}
         run: npm start
       
       - name: Commit changes
