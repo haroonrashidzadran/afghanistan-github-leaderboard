@@ -2,10 +2,7 @@
 
 <div align="center">
 
-![GitHub Repo Stars](https://img.shields.io/github/stars/afghanistan-github-leaderboard?style=flat-square)
-![GitHub forks](https://img.shields.io/github/forks/afghanistan-github-leaderboard?style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues/afghanistan-github-leaderboard?style=flat-square)
-![License](https://img.shields.io/github/license/afghanistan-github-leaderboard?style=flat-square)
+[![Top GitHub Users](https://github.com/haroonrashidzadran/afghanistan-github-leaderboard/actions/workflows/update-leaderboard.yml/badge.svg)](https://github.com/haroonrashidzadran/afghanistan-github-leaderboard/actions)
 
 **A public leaderboard showcasing the top GitHub developers from Afghanistan**
 
@@ -15,65 +12,28 @@
 
 ## 📊 About This Project
 
-This leaderboard ranks GitHub users based in Afghanistan using a weighted scoring system:
+This leaderboard ranks GitHub users based in Afghanistan using public contributions as the primary metric.
 
-- ⭐ **Stars Received**: 5 points per star
-- 👥 **Followers**: 1 point per follower
-- 📦 **Repositories**: 10 points per public repository
-- 📝 **Contributions**: 0.5 points per contribution
+## 📁 Available Lists
 
-**Formula**: `Score = (Stars × 5) + (Followers × 1) + (Repos × 10) + (Contributions × 0.5)`
+| List | Description |
+|------|-------------|
+| [Public Contributions](./markdown/public_contributions/afghanistan.md) | Top users by public contributions |
 
-## 🏆 Badges
+## 🏆 Top 50 Users
 
-| Rank | Badge | Description |
-|------|-------|-------------|
-| 🥇 1st | 🥇 | Gold Medal |
-| 🥈 2nd | 🥈 | Silver Medal |
-| 🥉 3rd | 🥉 | Bronze Medal |
-| 4-10 | 🔥 | Top 10 Developer |
-| 11-50 | ⭐ | Top 50 Developer |
-| 51-100 | 👤 | Featured Developer |
+*Coming soon - run the script to generate!*
 
----
+## 📈 Statistics
 
-## 👥 Top Developers
+- **Total Users Ranked**: Coming soon
+- **Total Stars**: Coming soon
+- **Total Followers**: Coming soon
+- **Total Contributions**: Coming soon
 
-| Rank | User | Score | ⭐ Stars | 👥 Followers | 📦 Repos | 📝 Contributions |
-|:----:|:-----|------:|--------:|------------:|--------:|-----------------:|
-| 1 🥇 | **[your-username](https://github.com/your-username)**<br>Your Name | **0** | 0 | 0 | 0 | 0 |
-| 2 🥈 | **[username2](https://github.com/username2)**<br>Name 2 | **0** | 0 | 0 | 0 | 0 |
-| 3 🥉 | **[username3](https://github.com/username3)**<br>Name 3 | **0** | 0 | 0 | 0 | 0 |
-| 4 🔥 | **[username4](https://github.com/username4)**<br>Name 4 | **0** | 0 | 0 | 0 | 0 |
-| 5 🔥 | **[username5](https://github.com/username5)**<br>Name 5 | **0** | 0 | 0 | 0 | 0 |
-
----
-
-## 🔧 Technical Details
-
-### How It Works
-
-1. **GitHub GraphQL API** - Queries users with location set to Afghanistan
-2. **Weighted Scoring** - Calculates rankings based on GitHub activity
-3. **Auto-Update** - GitHub Actions runs every 24 hours
-4. **No Database** - Purely static, no backend required
-
-### Scoring Formula
-
-```
-Score = (Total Stars Received × 5) 
-      + (Followers × 1) 
-      + (Public Repositories × 10) 
-      + (Contributions × 0.5)
-```
-
-### Setup Your Own
+## 🔧 Quick Start
 
 ```bash
-# Clone this repository
-git clone https://github.com/YOUR_USERNAME/afghanistan-github-leaderboard.git
-cd afghanistan-github-leaderboard
-
 # Install dependencies
 npm install
 
@@ -81,24 +41,22 @@ npm install
 cp .env.example .env
 # Edit .env and add your GITHUB_TOKEN
 
-# Run locally
+# Run locally (dry run)
+npm test
+
+# Run and update
 npm start
 ```
 
-### Getting a GitHub Token
+## 🔧 Technical Details
 
-1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
-2. Generate a new token (Classic)
-3. Select scopes: `repo`, `read:user`, `user:email`
-4. Copy the token and add it to repository secrets as `GITHUB_TOKEN`
-
-## 📝 License
-
-MIT License - feel free to fork and customize!
+- **API**: GitHub GraphQL API
+- **Schedule**: Every 24 hours via GitHub Actions
+- **No Database**: Purely static, no backend required
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+Feel free to fork and customize this project!
 
 ---
 

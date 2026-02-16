@@ -1,5 +1,9 @@
-// GraphQL Queries for GitHub API
 const { gql } = require('@apollo/client');
+
+/**
+ * GraphQL Queries for GitHub API
+ * Optimized for gayanvoice/top-github-users format
+ */
 
 // Search for users in Afghanistan
 const SEARCH_USERS = gql`
@@ -16,6 +20,9 @@ const SEARCH_USERS = gql`
           name
           avatarUrl(size: 100)
           bio
+          company
+          twitterUsername
+          location
           url
           followers {
             totalCount
@@ -24,9 +31,6 @@ const SEARCH_USERS = gql`
             totalCount
             nodes {
               stargazerCount
-              stargazers {
-                totalCount
-              }
             }
           }
           contributionsCollection {
@@ -55,48 +59,7 @@ const RATE_LIMIT = gql`
   }
 `;
 
-// Get user details with all repositories stats
-const USER_DETAILS = gql`
-  query UserDetails($login: String!) {
-    user(login: $login) {
-      login
-      name
-      avatarUrl(size: 100)
-      bio
-      url
-      followers {
-        totalCount
-      }
-      following {
-        totalCount
-      }
-      repositories(first: 100, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS_COUNT, direction: DESC}) {
-        totalCount
-        nodes {
-          name
-          stargazerCount
-          forkCount
-          primaryLanguage {
-            name
-            color
-          }
-        }
-      }
-      contributionsCollection {
-        totalCommitContributions
-        totalPullRequestContributions
-        totalIssueContributions
-        totalRepositoryContributions
-        restrictedContributionsCount
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
 module.exports = {
   SEARCH_USERS,
-  RATE_LIMIT,
-  USER_DETAILS
+  RATE_LIMIT
 };

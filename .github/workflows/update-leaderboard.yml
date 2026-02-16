@@ -25,6 +25,7 @@ jobs:
           sparse-checkout: |
             src
             package.json
+            templates
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,7 +46,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add README.md leaderboard.json
+          git add README.md markdown/public_contributions/afghanistan.md leaderboard.json
           git diff --stat
           if [ -n "$(git diff --name-only)" ]; then
             git commit -m "Update leaderboard - $(date '+%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
@@ -57,7 +58,7 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: ad-m/github-push-action@v0.8.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.HRZ_Token }}
           branch: main
           force: false
       
